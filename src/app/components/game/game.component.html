@@ -1,0 +1,80 @@
+<div class="game-container">
+  <h1>🔥 Jogo de Reflexos 🔥</h1>
+
+  <!-- Tela de login -->
+  <div *ngIf="!playerJoined" class="login-container">
+    
+    <!-- Imagem representativa do jogo -->
+    <img src="assets/game-banner.png" alt="Jogo de Reflexos" class="game-banner">
+
+    <!-- Caixa com as regras do jogo -->
+    <div class="game-rules">
+      <h3>📜 Regras do Jogo:</h3>
+      <ul>
+        <li>⏳ Clique o mais rápido possível quando for sua vez!</li>
+        <li>🚀 Seu tempo acumulado será registrado.</li>
+        <li>❌ Se ultrapassar 30 segundos no total, você será eliminado.</li>
+        <li>🏆 O último jogador restante vence a partida!</li>
+      </ul>
+    </div>
+
+    <!-- Input de nome e botão de entrada -->
+    <p>Digite seu nome e clique em "Entrar" para começar.</p>
+    <div class="input-group">
+      <input [(ngModel)]="playerName" placeholder="Digite seu nome" class="player-input" />
+      <button (click)="joinGame()" class="join-button">🚀 Entrar</button>
+    </div>
+  </div>
+
+  <!-- Tela do jogo -->
+  <div *ngIf="playerJoined">
+    <p><strong>Jogador logado:</strong> {{ playerName }}</p>
+
+    <!-- Exibir jogador atual -->
+    <p *ngIf="(game$ | async)?.currentPlayer">
+      <strong>Turno de:</strong> {{ (game$ | async)?.currentPlayer.name }}
+    </p>    
+
+    <!-- Exibir mensagem de espera -->
+    <p *ngIf="!(game$ | async)?.gameStarted">
+      ⏳ Aguardando mais jogadores para iniciar...
+    </p>
+
+   <!-- Lista de jogadores e tempo acumulado -->
+  <div class="players-list">
+    <h3>⏳ Tempos Acumulados</h3>
+    <div class="players-grid">
+      <div *ngFor="let player of (game$ | async)?.players" class="player-card">
+        <p><strong>{{ player.name }}</strong></p>
+        <p class="time-display">{{ player.totalTime.toFixed(2) }}s</p>
+        <span *ngIf="player.isEliminated" class="eliminated">❌ Eliminado</span>
+      </div>
+    </div>
+  </div>
+
+    <!-- Botão de clique rápido -->
+    <button 
+      *ngIf="(game$ | async)?.currentPlayer?.name === playerName"
+      (click)="clickButton()"
+      class="click-button">
+      🏃 Clique rápido!
+    </button>
+
+    <!-- Exibir vencedor -->
+    <p *ngIf="(game$ | async)?.winner" class="winner">
+      🏆 <strong>{{ (game$ | async)?.winner.name }}</strong> venceu o jogo! 🏆
+    </p>
+
+    <!-- Container para os fogos de artifício -->
+    <div *ngIf="(game$ | async)?.winner" id="confetti-container"></div>
+
+    <!-- Botão "Sair da Partida" enquanto o jogo estiver ativo -->
+    <button *ngIf="!winner" (click)="leaveGame()" class="leave-button">
+      🚪 Sair da Partida
+    </button>
+
+
+  
+  <canvas id="confettiCanvas"></canvas>
+
+</div>
